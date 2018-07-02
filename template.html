@@ -5,6 +5,23 @@
     <title><%= htmlWebpackPlugin.options.title %></title>
   </head>
   <body>
-    <div id="app"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <div class="jumbotron">
+            <form id="addChannel">
+              <div class="form-group">
+                <label for="rssFeed">RSS Feed</label>
+                <input type="text" name="url" class="form-control" id="channelURL" placeholder="URL RSS Канала">
+              </div>
+              <button type="submit" class="btn btn-primary">Добавить</button>
+            </form>
+          </div>
+        </div>
+        <div class="col-12">
+          <div id="content"></div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
