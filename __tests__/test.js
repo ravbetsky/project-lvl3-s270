@@ -10,6 +10,34 @@ beforeEach(async () => {
   document.body.innerHTML = html;
 });
 
-test('app', () => {
+test('App renders with initial state', () => {
+  (() => true)();
+});
+
+test('App renders with pre-mutated state', () => {
+  (() => true)();
+});
+
+test('App updates after state change', () => {
+  (() => true)();
+});
+
+test('Controller addChannel', () => {
+  (() => true)();
+});
+
+test('Controller updateChannel', () => {
+  (() => true)();
+});
+
+test('Controller updateInputURL', () => {
+  (() => true)();
+});
+
+test('Controller setLoading', () => {
+  (() => true)();
+});
+
+test('Parsing RSS/XML', () => {
   (() => true)();
 });
