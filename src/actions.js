@@ -18,6 +18,11 @@ export const updateChannel = (state, data) => {
   return { ...state, feed };
 };
 
+export const toggleAlert = (state, data) => {
+  const { alert } = state;
+  return { ...state, alert: { ...alert, ...data } };
+};
+
 export const setLoading = (state, data) => ({ ...state, isLoading: data });
 
 export default {
@@ -25,4 +30,5 @@ export default {
   updateChannel,
   updateInputURL,
   setLoading,
+  toggleAlert,
 };

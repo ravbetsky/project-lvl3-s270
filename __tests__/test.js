@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { promisify } from 'util';
+import { addChannel, updateInputURL } from '../src/actions';
 
 const readFile = promisify(fs.readFile);
 
@@ -10,34 +11,62 @@ beforeEach(async () => {
   document.body.innerHTML = html;
 });
 
-test('App renders with initial state', () => {
-  (() => true)();
-});
+const initialState = {
+  inputURL: '',
+  isLoading: false,
+  feed: [],
+};
 
-test('App renders with pre-mutated state', () => {
-  (() => true)();
-});
+// test('App renders with initial state', () => {
+//   expect(true).toBe(true);
+// });
 
-test('App updates after state change', () => {
-  (() => true)();
-});
+// test('App renders with pre-mutated state', () => {
+//   expect(true).toBe(true);
+// });
+
+// test('App updates after state change', () => {
+//   expect(true).toBe(true);
+// });
 
 test('Controller addChannel', () => {
-  (() => true)();
-});
+  const feedItem = {
+    title: 'Some feed',
+    items: [
+      {
+        title: 'Title',
+        link: 'link',
+        pubDate: 'description',
+      },
+    ],
+  };
 
-test('Controller updateChannel', () => {
-  (() => true)();
+  const expected = {
+    inputURL: '',
+    isLoading: false,
+    feed: [
+      { ...feedItem },
+    ],
+  };
+
+  const actual = addChannel(initialState, feedItem);
+
+  expect(actual).toEqual(expected);
 });
 
 test('Controller updateInputURL', () => {
-  (() => true)();
+  const str = '123test  hello';
+  const expected = {
+    inputURL: str,
+    isLoading: false,
+    feed: [],
+  };
+
+  const actual = updateInputURL(initialState, str);
+
+  expect(actual).toEqual(expected);
 });
 
-test('Controller setLoading', () => {
-  (() => true)();
-});
-
-test('Parsing RSS/XML', () => {
-  (() => true)();
-});
+// test('Parsing RSS/XML', () => {
+//   expect(true).toBe(true);
+// });

@@ -15,12 +15,12 @@ export default class Storage {
     this.eventEmitter.on(event, callback);
   }
 
-  notify(event, state) {
-    this.eventEmitter.emit(event, state, this.actions);
+  notify(event) {
+    this.eventEmitter.emit(event, () => this.getState(), this.actions);
   }
 
   notifyAll() {
-    [...this.events].forEach(event => this.notify(event, this.state));
+    [...this.events].forEach(event => this.notify(event));
   }
 
   getState() {
@@ -33,10 +33,10 @@ export default class Storage {
       [name]: (data) => {
         const newState = fn(this.state, data);
         const difference = diff(this.state, newState);
-        keys(difference).forEach((key) => {
-          this.notify(key, newState);
-        });
         this.state = newState;
+        keys(difference).forEach((key) => {
+          this.notify(key);
+        });
       },
     };
   }
