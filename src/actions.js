@@ -11,11 +11,16 @@ export const updateChannel = (state, data) => {
   const { feed } = state;
   const { link: linkToUpdate, items: newItems } = data;
   const channelIndex = findIndex(feed, ({ link }) => link === linkToUpdate);
-  const { items: oldItems } = feed[channelIndex];
 
-  feed[channelIndex].items = [...newItems, ...oldItems];
+  const newFeed = feed.map((channel, index) => {
+    if (index === channelIndex) {
+      const { items: oldItems } = channel;
+      return { ...channel, items: [...newItems, ...oldItems] };
+    }
+    return channel;
+  });
 
-  return { ...state, feed };
+  return { ...state, feed: newFeed };
 };
 
 export const toggleAlert = (state, data) => {

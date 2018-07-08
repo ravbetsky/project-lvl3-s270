@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import axios from 'axios';
 import serialize from 'form-serialize';
 import $ from 'jquery';
@@ -5,6 +6,7 @@ import 'bootstrap/js/src/modal';
 import { isURL } from 'validator';
 import parseRSS from './parser';
 
+const AUTOLOAD_INTERVAL = 5000;
 const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
 
 export const isValidURL = (feed, value) => feed.every(({ link }) => link !== value) && isURL(value);
@@ -14,10 +16,17 @@ export const init = (getState, actions) => {
   const input = document.getElementById('channelURL');
   const modal = document.getElementById('modal');
 
+  const {
+    updateChannel,
+    toggleAlert,
+    addChannel,
+    setLoading,
+    updateInputURL,
+  } = actions;
+
   form.addEventListener('submit', function (event) {
     event.preventDefault();
     const { feed, isLoading, inputURL } = getState();
-    const { setLoading, addChannel, toggleAlert } = actions;
     const { url } = serialize(this, { hash: true });
     if (isValidURL(feed, inputURL) && !isLoading) {
       setLoading(true);
@@ -37,7 +46,6 @@ export const init = (getState, actions) => {
   });
 
   input.addEventListener('input', function () {
-    const { updateInputURL } = actions;
     updateInputURL(this.value);
   });
 
@@ -47,6 +55,31 @@ export const init = (getState, actions) => {
     $(modal).find('.modal-title').text(title);
     $(modal).find('.modal-body').text(description);
   });
+
+  const autoload = () =>
+    Promise.resolve()
+      .then(() => new Promise(resolve => setTimeout(resolve, AUTOLOAD_INTERVAL)))
+      .then(() => {
+        const { feed } = getState();
+        return Promise.all(feed.map((channel) => {
+          const { items: currentsItems, link: url } = channel;
+          return axios.get(`${CORS_PROXY}${url}`, { headers: { 'Access-Control-Allow-Origin': '*' } })
+            .then((response) => {
+              const { items: recivedItems } = parseRSS(response.data);
+              const newItems = _.differenceBy(recivedItems, currentsItems, ({ link }) => link);
+              if (newItems.length > 0) {
+                updateChannel({ link: url, items: newItems });
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+              toggleAlert({ isShown: true, message: 'Error autoupdating feed', type: 'danger' });
+            });
+        }));
+      })
+      .then(autoload);
+
+  autoload();
 };
 
 export const updateButton = (getState) => {
